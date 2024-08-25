@@ -7,6 +7,7 @@ import { HTTPException } from 'hono/http-exception';
 
 import { getStudentInfo } from './services/getStudentInfo';
 import { getStudyLoad } from './services/getStudyLoad';
+import { generateICS } from './lib/calendar/generateIcs';
 
 const app = new Hono();
 
@@ -33,6 +34,11 @@ app.get('/api/profile', tokenMiddleware, async (c) => {
 app.get('/api/study-load', tokenMiddleware, async (c) => {
   const studyLoad = await getStudyLoad(c.var.tokens);
   return c.json(studyLoad);
+});
+
+app.get('/api/study-load/ics', tokenMiddleware, async (c) => {
+  const studyLoad = await getStudyLoad(c.var.tokens);
+  return c.text(generateICS(studyLoad));
 });
 
 /**
