@@ -8,6 +8,7 @@ import {
 } from '../types/RequestTokenCookies';
 import { LoginCredentialsSchema } from '../types/LoginCredentials';
 import { HTTPException } from 'hono/http-exception';
+import { log } from '../lib/utils/log';
 
 export const tokenMiddleware = createMiddleware<{
   Variables: {
@@ -17,6 +18,8 @@ export const tokenMiddleware = createMiddleware<{
   try {
     const allCookies = getCookie(c);
     const parsedTokens = RequestTokenCookiesSchema.safeParse(allCookies);
+
+    log.info({ parsedTokens });
 
     const isValidRequestTokens =
       parsedTokens.success && (await validateRequestTokens(parsedTokens.data));

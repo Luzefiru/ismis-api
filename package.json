@@ -2,7 +2,7 @@
   "name": "ismis-api",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "start": "bun src/index.ts"
+    "start": "bun run --hot src/index.ts"
   },
   "dependencies": {
     "axios": "^1.7.5",

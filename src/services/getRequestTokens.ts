@@ -31,7 +31,12 @@ interface LoginCredentials {
 export const getRequestTokens = async (
   credentials: LoginCredentials
 ): Promise<RequestTokenCookies> => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    defaultViewport: null,
+    executablePath: '/usr/bin/google-chrome',
+    args: ['--no-sandbox'],
+  });
   log.info('Launched Puppeteer instance.');
   const page = await browser.newPage();
 
