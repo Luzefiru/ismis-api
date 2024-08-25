@@ -38,7 +38,10 @@ export const tokenMiddleware = createMiddleware<{
 
         const tokens = await getRequestTokens(parsedCredentials.data);
         for (const key in tokens) {
-          setCookie(c, key, tokens[key as keyof RequestTokenCookies]);
+          setCookie(c, key, tokens[key as keyof RequestTokenCookies], {
+            sameSite: 'None',
+            secure: true,
+          });
         }
         c.set('tokens', tokens);
       } catch (_) {
