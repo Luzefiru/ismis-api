@@ -29,7 +29,6 @@ export function parseStudentInfo(html: string): StudentInfo {
     const parsedData = StudentInfoSchema.parse(data);
     return parsedData;
   } catch (e) {
-    log.error(e);
     throw new Error('Invalid student information');
   }
 }

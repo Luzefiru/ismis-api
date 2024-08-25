@@ -22,21 +22,25 @@ export const tokenMiddleware = createMiddleware<{
       parsedTokens.success && (await validateRequestTokens(parsedTokens.data));
 
     if (!isValidRequestTokens) {
-      const parsedCredentials = LoginCredentialsSchema.safeParse(
-        await c.req.json()
-      );
+      try {
+        const body = await c.req.json();
 
-      if (!parsedCredentials.success) {
-        throw new Error(
-          `Invalid login credentials: ${parsedCredentials.error.issues[0].message}`
-        );
-      }
+        const parsedCredentials = LoginCredentialsSchema.safeParse(body);
 
-      const tokens = await getRequestTokens(parsedCredentials.data);
-      for (const key in tokens) {
-        setCookie(c, key, tokens[key as keyof RequestTokenCookies]);
+        if (!parsedCredentials.success) {
+          throw new Error(
+            `Invalid login credentials: ${parsedCredentials.error.issues[0].message}`
+          );
+        }
+
+        const tokens = await getRequestTokens(parsedCredentials.data);
+        for (const key in tokens) {
+          setCookie(c, key, tokens[key as keyof RequestTokenCookies]);
+        }
+        c.set('tokens', tokens);
+      } catch (_) {
+        throw new Error('Current user session is invalid. Please login again.');
       }
-      c.set('tokens', tokens);
     } else {
       const existingTokens = {} as RequestTokenCookies;
       for (const key in parsedTokens.data) {
