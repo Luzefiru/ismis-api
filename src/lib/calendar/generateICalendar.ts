@@ -24,7 +24,7 @@ interface StudyLoadCourse {
   status: string;
 }
 
-export function generateICS(studyLoadCourses: StudyLoadCourse[]): string {
+export function generateICalendar(studyLoadCourses: StudyLoadCourse[]): string {
   // Validate input
   StudyLoadSchema.parse(studyLoadCourses);
 
