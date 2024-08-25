@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
+import { cors } from 'hono/cors';
 import { tokenMiddleware } from './middleware/tokenMiddleware';
 
 import { log } from './lib/utils/log';
@@ -15,6 +16,20 @@ const app = new Hono();
  * Global middleware
  */
 app.use('*', logger());
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'https://example.org'],
+    allowHeaders: [
+      'Content-Type',
+      'X-Custom-Header',
+      'Upgrade-Insecure-Requests',
+    ],
+    allowMethods: ['POST', 'GET', 'OPTIONS'],
+    credentials: true,
+    maxAge: 600,
+    exposeHeaders: ['Content-Length', 'X-Kuma-Revision', 'Set-Cookie'],
+  })
+);
 
 /**
  * API Routes

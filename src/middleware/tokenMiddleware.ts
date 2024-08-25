@@ -19,7 +19,7 @@ export const tokenMiddleware = createMiddleware<{
     const allCookies = getCookie(c);
     const parsedTokens = RequestTokenCookiesSchema.safeParse(allCookies);
 
-    log.info({ parsedTokens });
+    log.info({ allCookies, parsedTokens });
 
     const isValidRequestTokens =
       parsedTokens.success && (await validateRequestTokens(parsedTokens.data));
