@@ -91,6 +91,7 @@ export function generateICalendar(studyLoadCourses: StudyLoadCourse[]): string {
           byDay: [convertDayToIcal(day)],
           count: 15,
         },
+        timezone: 'Asia/Shanghai',
       };
       // Assuming `calendar.events` is a function that returns an array of events
       const eventsArray = calendar.events();

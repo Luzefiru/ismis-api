@@ -1,5 +1,5 @@
 import { createMiddleware } from 'hono/factory';
-import { getCookie, setCookie } from 'hono/cookie';
+import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import { getRequestTokens } from '../services/getRequestTokens';
 import { validateRequestTokens } from '../services/validateRequestTokens';
 import {
@@ -18,8 +18,6 @@ export const tokenMiddleware = createMiddleware<{
   try {
     const allCookies = getCookie(c);
     const parsedTokens = RequestTokenCookiesSchema.safeParse(allCookies);
-
-    log.info({ allCookies, parsedTokens });
 
     const isValidRequestTokens =
       parsedTokens.success && (await validateRequestTokens(parsedTokens.data));

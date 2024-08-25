@@ -22,6 +22,12 @@ interface LoginCredentials {
   password: string;
 }
 
+const PRODUCTION_OPTIONS = {
+  defaultViewport: null,
+  executablePath: '/usr/bin/google-chrome',
+  args: ['--no-sandbox'],
+};
+
 /**
  * Logs into the page and fetches the tokens for maintaining a session.
  *
@@ -31,13 +37,16 @@ interface LoginCredentials {
 export const getRequestTokens = async (
   credentials: LoginCredentials
 ): Promise<RequestTokenCookies> => {
-  const browser = await puppeteer.launch({
-    headless: true,
-    defaultViewport: null,
-    executablePath: '/usr/bin/google-chrome',
-    args: ['--no-sandbox'],
-  });
-  log.info('Launched Puppeteer instance.');
+  log.info('Launching Puppeteer...');
+  const options =
+    process.env.NODE_ENV !== 'production'
+      ? {
+          headless: true,
+        }
+      : { ...PRODUCTION_OPTIONS, headless: true };
+
+  const browser = await puppeteer.launch(options);
+  log.info('Successfully launched Puppeteer instance.');
   const page = await browser.newPage();
 
   try {
