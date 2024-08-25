@@ -18,7 +18,7 @@ const app = new Hono();
 app.use('*', logger());
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://example.org'],
+    origin: ['http://localhost:3000', 'https://himari.pages.dev'],
     allowHeaders: [
       'Content-Type',
       'X-Custom-Header',
