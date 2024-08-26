@@ -82,7 +82,7 @@ export const getRequestTokens = async (
     log.info('Fetching session tokens...');
     await page.goto(`https://${env.ISMIS_DOMAIN}/Account/Login?ReturnUrl=%2F`, {
       waitUntil: 'domcontentloaded', // Load until the DOM is ready, quicker than networkidle2
-      timeout: 30000,
+      timeout: 50000,
     });
 
     // Extract the __RequestVerificationToken from the page
