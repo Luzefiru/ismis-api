@@ -1,6 +1,5 @@
 import { StudentInfo, StudentInfoSchema } from '../../types/StudentInfo';
 import { load } from 'cheerio';
-import { log } from '../utils/log';
 
 export function parseStudentInfo(html: string): StudentInfo {
   const $ = load(html);

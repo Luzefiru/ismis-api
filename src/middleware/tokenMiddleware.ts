@@ -8,7 +8,6 @@ import {
 } from '../types/RequestTokenCookies';
 import { LoginCredentialsSchema } from '../types/LoginCredentials';
 import { HTTPException } from 'hono/http-exception';
-import { log } from '../lib/utils/log';
 
 export const tokenMiddleware = createMiddleware<{
   Variables: {
@@ -42,8 +41,8 @@ export const tokenMiddleware = createMiddleware<{
           });
         }
         c.set('tokens', tokens);
-      } catch (_) {
-        throw new Error('Current user session is invalid. Please login again.');
+      } catch (e) {
+        throw e;
       }
     } else {
       const existingTokens = {} as RequestTokenCookies;

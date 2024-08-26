@@ -23,9 +23,20 @@ interface LoginCredentials {
 }
 
 const PRODUCTION_OPTIONS = {
-  defaultViewport: null,
+  headless: true,
   executablePath: '/usr/bin/google-chrome',
-  args: ['--no-sandbox'],
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-accelerated-2d-canvas',
+    '--no-zygote',
+    '--disable-gl-drawing-for-tests',
+    '--disable-extensions',
+    '--disable-software-rasterizer',
+    '--disable-gpu',
+    '--single-process',
+  ],
 };
 
 /**
@@ -42,17 +53,36 @@ export const getRequestTokens = async (
     process.env.NODE_ENV !== 'production'
       ? {
           headless: true,
+          args: [
+            '--disable-features=IsolateOrigins',
+            '--disable-site-isolation-trials',
+          ],
         }
-      : { ...PRODUCTION_OPTIONS, headless: true };
+      : PRODUCTION_OPTIONS;
 
   const browser = await puppeteer.launch(options);
   log.info('Successfully launched Puppeteer instance.');
   const page = await browser.newPage();
 
   try {
+    // Disable loading of unnecessary resources like images and stylesheets
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      if (
+        ['image', 'stylesheet', 'font', 'media', 'other'].includes(
+          req.resourceType()
+        )
+      ) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+
     log.info('Fetching session tokens...');
     await page.goto(`https://${env.ISMIS_DOMAIN}/Account/Login?ReturnUrl=%2F`, {
-      waitUntil: 'networkidle2',
+      waitUntil: 'domcontentloaded', // Load until the DOM is ready, quicker than networkidle2
+      timeout: 30000,
     });
 
     // Extract the __RequestVerificationToken from the page
@@ -81,7 +111,10 @@ export const getRequestTokens = async (
     log.info('Logging in...');
     // Submit the form
     await page.click('button[type="submit"]');
-    await page.waitForNavigation({ waitUntil: 'networkidle2' });
+    await page.waitForNavigation({
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
 
     log.info('Extracting cookies...');
     // Extract cookies from the page after login
@@ -98,7 +131,7 @@ export const getRequestTokens = async (
 
     if (!result.success) {
       throw new Error(
-        'An error occured while retrieving tokens. Are your credentials correct?'
+        'An error occurred while retrieving tokens. Are your credentials correct?'
       );
     }
 

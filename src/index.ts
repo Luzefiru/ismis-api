@@ -2,6 +2,8 @@ import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 import { cors } from 'hono/cors';
 import { tokenMiddleware } from './middleware/tokenMiddleware';
+import { rateLimiter } from 'hono-rate-limiter';
+import { v4 as uuid } from 'uuid';
 
 import { log } from './lib/utils/log';
 import { HTTPException } from 'hono/http-exception';
@@ -16,6 +18,16 @@ const app = new Hono();
  * Global middleware
  */
 app.use('*', logger());
+app.use(
+  '*',
+  rateLimiter({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: 'draft-6',
+    keyGenerator: (c) => uuid(),
+    // uses MemoryStore by default
+  })
+);
 app.use(
   cors({
     origin: ['http://localhost:3000', 'https://himari.pages.dev'],
