@@ -3,7 +3,6 @@ import { parseStudyLoad } from '../lib/parsers/parseStudyLoad';
 import { createRequestHeaders } from '../lib/utils/createRequestHeaders';
 import { env } from '../config/env';
 import { RequestTokenCookies } from '../types/RequestTokenCookies';
-import { log } from '../lib/utils/log';
 import { StudyLoadCourse } from '../types/StudyLoadCourse';
 import { StudyLoadArgsSchema } from '../types/StudyLoadCourse';
 

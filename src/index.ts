@@ -21,8 +21,8 @@ app.use('*', logger());
 app.use(
   '*',
   rateLimiter({
-    windowMs: 15 * 60 * 1000,
-    limit: 100,
+    windowMs: 5 * 60 * 1000,
+    limit: 5,
     standardHeaders: 'draft-6',
     keyGenerator: (c) => uuid(),
     // uses MemoryStore by default
@@ -65,6 +65,7 @@ app.get('/api/study-load', tokenMiddleware, async (c) => {
 
 app.get('/api/study-load/ics', tokenMiddleware, async (c) => {
   const studyLoad = await getStudyLoad(c.var.tokens);
+  log.info({ studyLoad });
   return c.text(generateICalendar(studyLoad));
 });
 

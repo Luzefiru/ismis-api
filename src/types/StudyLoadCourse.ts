@@ -41,4 +41,4 @@ export const StudyLoadArgsSchema = z.object({
   period: z.nativeEnum(AcademicPeriod).default(AcademicPeriod.FIRST_SEMESTER),
   year: AcademicYearSchema,
 });
-export type StudyLoadArgsSchema = z.infer<typeof StudyLoadArgsSchema>;
+export type StudyLoadArgs = z.infer<typeof StudyLoadArgsSchema>;

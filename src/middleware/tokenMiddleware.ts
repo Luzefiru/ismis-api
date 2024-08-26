@@ -1,5 +1,5 @@
 import { createMiddleware } from 'hono/factory';
-import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
+import { getCookie, setCookie } from 'hono/cookie';
 import { getRequestTokens } from '../services/getRequestTokens';
 import { validateRequestTokens } from '../services/validateRequestTokens';
 import {
@@ -8,6 +8,7 @@ import {
 } from '../types/RequestTokenCookies';
 import { LoginCredentialsSchema } from '../types/LoginCredentials';
 import { HTTPException } from 'hono/http-exception';
+import { log } from '../lib/utils/log';
 
 export const tokenMiddleware = createMiddleware<{
   Variables: {
@@ -26,6 +27,7 @@ export const tokenMiddleware = createMiddleware<{
         const body = await c.req.json();
 
         const parsedCredentials = LoginCredentialsSchema.safeParse(body);
+        log.info(`Fetching tokens for ${parsedCredentials.data?.username}...`);
 
         if (!parsedCredentials.success) {
           throw new Error(
